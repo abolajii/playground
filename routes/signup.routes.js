@@ -23,7 +23,7 @@ signUpRoute.post("/create-user", controller.saveUid);
 
 signUpRoute.post(
   "/signup",
-  // upload.array("photo", 5),
+  upload.array("photo", 5),
   controller.signUpWithEmail
 );
 

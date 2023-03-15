@@ -6,21 +6,19 @@ const Role = db.role;
 const Preferences = db.preferences;
 const Uid = db.uid;
 
-const splitByComma = (interests) => {
-  return interests.split(",");
-};
-
 const signUpWithEmail = async (req, res) => {
   const links = [];
 
-  // for (let i = 0; i < req.files.length; i++) {
-  //   console.log("Uploading...", i);
-  //   const file = req.files[i];
-  //   const result = await uploadFile(file);
-  //   links.push(`/images/${result.Key}`);
-  // }
+  for (let i = 0; i < req.files.length; i++) {
+    console.log("Uploading...", i);
+    const file = req.files[i];
+    const result = await uploadFile(file);
+    links.push(`/images/${result.Key}`);
+  }
 
-  // req.body.photos = links;
+  req.body.photos = links;
+
+  console.log(req.body);
 
   const {
     dob,
@@ -30,10 +28,8 @@ const signUpWithEmail = async (req, res) => {
     my_interests,
     interested_in,
     name,
-    // photos,
+    photos,
   } = req.body;
-
-  // const _my_interests = splitByComma(my_interests);
 
   const newUser = new User({
     dob,
@@ -42,7 +38,7 @@ const signUpWithEmail = async (req, res) => {
     gender,
     my_interests,
     interested_in,
-    // photos,
+    photos,
     name,
   });
 
