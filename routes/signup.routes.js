@@ -2,14 +2,7 @@ const signUpRoute = require("express").Router();
 const controller = require("../controller/signup.controller");
 const multer = require("multer");
 
-const storage = multer.diskStorage({
-  destination(req, file, callback) {
-    callback(null, "../../../../../../tmp");
-  },
-  filename(req, file, callback) {
-    callback(null, `${file.fieldname}_${Date.now()}_${file.originalname}`);
-  },
-});
+const storage = multer.memoryStorage();
 
 const upload = multer({ storage });
 

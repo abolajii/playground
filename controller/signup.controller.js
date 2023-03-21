@@ -8,12 +8,15 @@ const Uid = db.uid;
 
 const signUpWithEmail = async (req, res) => {
   const links = [];
+  const randomImageName = (bytes = 32) =>
+    crypto.randomBytes(bytes).toString("hex");
 
+  const imageName = randomImageName();
   for (let i = 0; i < req.files.length; i++) {
     console.log("Uploading...", i);
     const file = req.files[i];
-    const result = await uploadFile(file);
-    links.push(`/images/${result.Key}`);
+    await uploadFile(file, name);
+    links.push(`/${imageName}`);
   }
 
   req.body.photos = links;

@@ -1,22 +1,46 @@
-const S3 = require("aws-sdk/clients/s3");
-const fs = require("fs");
+const crypto = require("crypto");
 require("dotenv").config();
 
-const s3 = new S3({
-  accessKeyId: process.env.MY_AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.MY_AWS_SECRET_ACCESS_KEY,
-  region: process.env.MY_AWS_REGION,
+const {
+  S3Client,
+  PutObjectCommand,
+  GetObjectCommand,
+  DeleteObjectCommand,
+} = require("@aws-sdk/client-s3");
+
+const bucket = process.env.MY_AWS_STORAGE_BUCKET_NAME;
+
+const s3 = new S3Client({
+  credentials: {
+    accessKeyId: process.env.MY_AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.MY_AWS_SECRET_ACCESS_KEY,
+  },
+  region: process.env.MY_AWS_S3_REGION_NAME,
 });
 
-const uploadFile = (file) => {
-  const readStream = fs.createReadStream(file.path);
+const randomImageName = (bytes = 32) =>
+  crypto.randomBytes(bytes).toString("hex");
+
+const imageName = randomImageName();
+
+const uploadFile = async (file) => {
+  const resizeMode = await sharp(file.buffer)
+    .resize({
+      height: 1920,
+      width: 1000,
+      fit: "cover",
+    })
+    .toBuffer();
+
   const params = {
-    Bucket: process.env.MY_AWS_STORAGE_BUCKET_NAME,
-    Body: readStream,
-    Key: file.originalname,
+    Bucket: bucket,
+    Key: imageName,
+    Body: resizeMode,
+    ContentType: file.mimetype,
   };
 
-  return s3.upload(params).promise();
+  const command = new PutObjectCommand(params);
+  await s3.send(command);
 };
 
 const downloadFile = (file) => {
