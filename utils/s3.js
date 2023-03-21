@@ -38,13 +38,14 @@ const uploadFile = async (file, imageName) => {
   await s3.send(command);
 };
 
-const downloadFile = (file) => {
+const downloadFile = async (imageName) => {
   const params = {
-    Bucket: process.env.MY_AWS_STORAGE_BUCKET_NAME,
-    Key: file,
+    Bucket: bucket,
+    Key: imageName,
   };
 
-  return s3.getObject(params).createReadStream();
+  const command = new GetObjectCommand(params);
+  return await getSignedUrl(s3, command, { expiresIn: 3600 });
 };
 
 const deleteFile = (file) => {

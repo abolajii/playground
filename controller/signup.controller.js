@@ -18,7 +18,7 @@ const signUpWithEmail = async (req, res) => {
     console.log("Uploading...", i);
     const file = req.files[i];
     await uploadFile(file, imageName);
-    links.push(`/${imageName}`);
+    links.push(`${imageName}`);
   }
 
   req.body.photos = links;

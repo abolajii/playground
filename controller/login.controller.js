@@ -1,10 +1,13 @@
 const db = require("../model");
 const { getAge } = require("../utils/get.age");
 const { getDistanceBetweenTwoPoints } = require("../utils/get.miles");
+const { downloadFile } = require("../utils/s3");
 
 const User = db.user;
 const Preferences = db.preferences;
 const Uid = db.uid;
+
+const getImageUrl = () => {};
 
 const loginWithEmail = (req, res) => {
   User.findOne({ email: req.body.email }, (err, user) => {
@@ -112,7 +115,7 @@ const getUser = (req, res) => {
   );
 };
 
-const getAllUsers = (req, res) => {
+const getAllUsers = async (req, res) => {
   User.find(
     {
       _id: { $nin: req.body.id },
@@ -129,8 +132,14 @@ const getAllUsers = (req, res) => {
             confirmationCode,
             dob,
             coords,
+            photos,
             ...userWithoutPassword
           } = user._doc;
+
+          const getImageUrl = photos.map((each) => {
+            console.log(each);
+          });
+
           const age = getAge(dob);
           const miles = getDistanceBetweenTwoPoints(
             req.body.coords,
