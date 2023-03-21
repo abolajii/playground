@@ -6,6 +6,7 @@ const {
   GetObjectCommand,
   DeleteObjectCommand,
 } = require("@aws-sdk/client-s3");
+const sharp = require("sharp");
 
 const bucket = process.env.MY_AWS_STORAGE_BUCKET_NAME;
 
