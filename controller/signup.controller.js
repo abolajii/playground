@@ -1,5 +1,6 @@
 const db = require("../model");
 const { uploadFile } = require("../utils/s3");
+const crypto = require("crypto");
 
 const User = db.user;
 const Role = db.role;
@@ -15,7 +16,7 @@ const signUpWithEmail = async (req, res) => {
   for (let i = 0; i < req.files.length; i++) {
     console.log("Uploading...", i);
     const file = req.files[i];
-    await uploadFile(file, name);
+    await uploadFile(file, imageName);
     links.push(`/${imageName}`);
   }
 

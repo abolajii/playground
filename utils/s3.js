@@ -1,4 +1,3 @@
-const crypto = require("crypto");
 require("dotenv").config();
 
 const {
@@ -18,12 +17,7 @@ const s3 = new S3Client({
   region: process.env.MY_AWS_S3_REGION_NAME,
 });
 
-const randomImageName = (bytes = 32) =>
-  crypto.randomBytes(bytes).toString("hex");
-
-const imageName = randomImageName();
-
-const uploadFile = async (file) => {
+const uploadFile = async (file, imageName) => {
   const resizeMode = await sharp(file.buffer)
     .resize({
       height: 1920,
