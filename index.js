@@ -5,7 +5,11 @@ const cors = require("cors");
 require("dotenv").config();
 const port = process.env.PORT || 6000;
 
-var whitelist = ["http://localhost:3000", "https://lovebirdz-759c8.web.app/*"];
+var whitelist = [
+  "http://localhost:3000",
+  "https://lovebirdz-759c8.web.app",
+  "https://lovebirdz-759c8.web.app/details",
+];
 var corsOptions = {
   origin: function (origin, callback) {
     if (whitelist.indexOf(origin) !== -1) {
