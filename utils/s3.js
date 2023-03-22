@@ -6,6 +6,7 @@ const {
   GetObjectCommand,
   DeleteObjectCommand,
 } = require("@aws-sdk/client-s3");
+const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
 const sharp = require("sharp");
 
 const bucket = process.env.MY_AWS_STORAGE_BUCKET_NAME;
@@ -45,7 +46,8 @@ const downloadFile = async (imageName) => {
   };
 
   const command = new GetObjectCommand(params);
-  return await getSignedUrl(s3, command, { expiresIn: 3600 });
+  const url = getSignedUrl(s3, command, { expiresIn: 3600 });
+  return url;
 };
 
 const deleteFile = (file) => {

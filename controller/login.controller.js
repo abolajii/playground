@@ -1,3 +1,4 @@
+const { get } = require("mongoose");
 const db = require("../model");
 const { getAge } = require("../utils/get.age");
 const { getDistanceBetweenTwoPoints } = require("../utils/get.miles");
@@ -7,7 +8,9 @@ const User = db.user;
 const Preferences = db.preferences;
 const Uid = db.uid;
 
-const getImageUrl = () => {};
+const getImageUrl = async (el) => {
+  return [el];
+};
 
 const loginWithEmail = (req, res) => {
   User.findOne({ email: req.body.email }, (err, user) => {
@@ -115,7 +118,7 @@ const getUser = (req, res) => {
   );
 };
 
-const getAllUsers = async (req, res) => {
+const getAllUsers = (req, res) => {
   User.find(
     {
       _id: { $nin: req.body.id },
@@ -126,19 +129,23 @@ const getAllUsers = async (req, res) => {
         return;
       }
       if (users) {
-        const allUsers = users.map((user) => {
+        let finalData;
+
+        const newUsers = users.map(async (user) => {
+          const url = [];
           const {
             password,
             confirmationCode,
             dob,
             coords,
-            photos,
             ...userWithoutPassword
           } = user._doc;
 
-          const getImageUrl = photos.map((each) => {
-            console.log(each);
-          });
+          for (let index = 0; index < user.photos.length; index++) {
+            const element = user.photos[index];
+            const res = await downloadFile(element);
+            url.push(res);
+          }
 
           const age = getAge(dob);
           const miles = getDistanceBetweenTwoPoints(
@@ -149,13 +156,15 @@ const getAllUsers = async (req, res) => {
           const allData = {
             ...userWithoutPassword,
             age,
+            url,
             miles: Number(miles),
           };
-
           return allData;
         });
 
-        res.status(200).json(allUsers);
+        Promise.all(newUsers).then(function (results) {
+          res.status(200).json(results);
+        });
       }
     }
   );

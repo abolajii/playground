@@ -7,6 +7,7 @@ const port = process.env.PORT || 6000;
 
 var whitelist = [
   "http://localhost:3000",
+  "http://localhost:3000/details",
   "https://lovebirdz-759c8.web.app",
   "https://lovebirdz-759c8.web.app/details",
 ];
