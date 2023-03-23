@@ -22,8 +22,8 @@ const s3 = new S3Client({
 const uploadFile = async (file, imageName) => {
   const resizeMode = await sharp(file.buffer)
     .resize({
-      height: 1920,
-      width: 1000,
+      height: 800,
+      width: 500,
       fit: "cover",
     })
     .toBuffer();
@@ -46,7 +46,7 @@ const downloadFile = async (imageName) => {
   };
 
   const command = new GetObjectCommand(params);
-  const url = getSignedUrl(s3, command, { expiresIn: 3600 });
+  const url = getSignedUrl(s3, command, { expiresIn: 86400 });
   return url;
 };
 
