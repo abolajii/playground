@@ -1,5 +1,5 @@
 const db = require("../model");
-const { uploadFile } = require("../utils/s3");
+const { uploadFile, downloadFile } = require("../utils/s3");
 const crypto = require("crypto");
 
 const User = db.user;
@@ -22,8 +22,6 @@ const signUpWithEmail = async (req, res) => {
   }
 
   req.body.photos = links;
-
-  console.log(req.body);
 
   const {
     dob,
@@ -74,7 +72,9 @@ const signUpWithEmail = async (req, res) => {
         }
 
         if (user) {
-          Role.findOne({ name: "user" }, (err, role) => {
+          Role.findOne({ name: "user" }, async (err, role) => {
+            const url = [];
+
             if (err) {
               res.status(500).json({ message: "Error on the server." });
               return;
@@ -82,9 +82,18 @@ const signUpWithEmail = async (req, res) => {
 
             const { __v, password, ...userWithoutPassword } = user._doc;
 
+            for (let index = 0; index < user.photos.length; index++) {
+              const element = user.photos[index];
+              const res = await downloadFile(element);
+              url.push(res);
+            }
+
             const userToSend = {
               ...userWithoutPassword,
+              url,
             };
+
+            console.log(userToSend);
 
             user.roles = [role._id];
             user.save((err) => {
@@ -118,7 +127,8 @@ const signUpWithEmail = async (req, res) => {
         }
 
         if (user) {
-          Role.findOne({ name: "user" }, (err, role) => {
+          Role.findOne({ name: "user" }, async (err, role) => {
+            const url = [];
             if (err) {
               res.status(500).json({ message: "Error on the server." });
               return;
@@ -126,9 +136,18 @@ const signUpWithEmail = async (req, res) => {
 
             const { __v, password, ...userWithoutPassword } = user._doc;
 
+            for (let index = 0; index < user.photos.length; index++) {
+              const element = user.photos[index];
+              const res = await downloadFile(element);
+              url.push(res);
+            }
+
             const userToSend = {
               ...userWithoutPassword,
+              url,
             };
+
+            console.log(userToSend);
 
             user.roles = [role._id];
             user.save((err) => {

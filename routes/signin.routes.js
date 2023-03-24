@@ -25,4 +25,6 @@ signInRoute.post("/edit/interests", controller.editInterests);
 
 signInRoute.post("/get-user", controller.getUser);
 
+signInRoute.delete("/delete/image", controller.deletePicture);
+
 module.exports = signInRoute;

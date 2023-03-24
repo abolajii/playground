@@ -2,18 +2,44 @@ const { get } = require("mongoose");
 const db = require("../model");
 const { getAge } = require("../utils/get.age");
 const { getDistanceBetweenTwoPoints } = require("../utils/get.miles");
-const { downloadFile } = require("../utils/s3");
+const { downloadFile, deleteFile } = require("../utils/s3");
 
 const User = db.user;
 const Preferences = db.preferences;
 const Uid = db.uid;
 
-const getImageUrl = async (el) => {
-  return [el];
+const deletePicture = async (req, res) => {
+  await deleteFile(req.body.img);
+
+  User.findById({ _id: req.body._id }, async (err, user) => {
+    if (err) {
+      res.status(500).json({ message: "Error on the server." });
+      return;
+    }
+    if (user) {
+      const url = [];
+      const newPhotos = user.photos.filter((e) => e !== req.body.img);
+
+      user.photos = newPhotos;
+
+      for (let index = 0; index < user.photos.length; index++) {
+        const element = user.photos[index];
+        const res = await downloadFile(element);
+        url.push(res);
+      }
+
+      user.save();
+      const { __v, password, coords, ...userWithoutPassword } = user._doc;
+
+      const allData = { url, ...userWithoutPassword };
+
+      res.status(200).json(allData);
+    }
+  });
 };
 
 const loginWithEmail = (req, res) => {
-  User.findOne({ email: req.body.email }, (err, user) => {
+  User.findOne({ email: req.body.email }, async (err, user) => {
     if (err) {
       res.status(500).json({ message: "Error on the server." });
       return;
@@ -23,6 +49,8 @@ const loginWithEmail = (req, res) => {
       if (user.password !== req.body.password) {
         res.status(400).json({ message: "Invalid user details" });
       } else {
+        const url = [];
+
         const {
           password,
           confirmationCode,
@@ -31,6 +59,12 @@ const loginWithEmail = (req, res) => {
           __v,
           ...userWithoutPassword
         } = user._doc;
+
+        for (let index = 0; index < user.photos.length; index++) {
+          const element = user.photos[index];
+          const res = await downloadFile(element);
+          url.push(res);
+        }
 
         Preferences.findOne({ user_id: user._id }, (err, preferences) => {
           if (err) {
@@ -45,6 +79,7 @@ const loginWithEmail = (req, res) => {
               ...userWithoutPassword,
               preferences: preferencesWithoutId,
               dob,
+              url,
             };
 
             res.status(200).json(allData);
@@ -70,45 +105,49 @@ const getUser = (req, res) => {
       }
 
       if (id) {
-        User.findOne({ _id: id.user_id }, (err, user) => {
+        User.findOne({ _id: id.user_id }, async (err, user) => {
           if (err) {
             res.status(500).json({ message: "Error on the server." });
             return;
           }
           if (user) {
-            if (user.password !== req.body.password) {
-              res.status(400).json({ message: "Invalid user details" });
-            } else {
-              const {
-                password,
-                confirmationCode,
-                dob,
-                coords,
-                __v,
-                ...userWithoutPassword
-              } = user._doc;
+            const url = [];
+            const {
+              password,
+              confirmationCode,
+              dob,
+              coords,
+              __v,
+              ...userWithoutPassword
+            } = user._doc;
 
-              Preferences.findOne({ user_id: user._id }, (err, preferences) => {
-                if (err) {
-                  res.status(500).json({ message: "Error on the server." });
-                  return;
-                }
-                if (preferences) {
-                  const { user_id, _id, __v, ...preferencesWithoutId } =
-                    preferences._doc;
-
-                  const allData = {
-                    ...userWithoutPassword,
-                    preferences: preferencesWithoutId,
-                    dob,
-                  };
-
-                  res.status(200).json(allData);
-                } else {
-                  res.status(404).json({ message: "Preferences not found" });
-                }
-              });
+            for (let index = 0; index < user.photos.length; index++) {
+              const element = user.photos[index];
+              const res = await downloadFile(element);
+              url.push(res);
             }
+
+            Preferences.findOne({ user_id: user._id }, (err, preferences) => {
+              if (err) {
+                res.status(500).json({ message: "Error on the server." });
+                return;
+              }
+              if (preferences) {
+                const { user_id, _id, __v, ...preferencesWithoutId } =
+                  preferences._doc;
+
+                const allData = {
+                  ...userWithoutPassword,
+                  preferences: preferencesWithoutId,
+                  dob,
+                  url,
+                };
+
+                res.status(200).json(allData);
+              } else {
+                res.status(404).json({ message: "Preferences not found" });
+              }
+            });
           } else {
             res.status(404).json({ message: "Invalid email or password!" });
           }
@@ -129,8 +168,6 @@ const getAllUsers = (req, res) => {
         return;
       }
       if (users) {
-        let finalData;
-
         const newUsers = users.map(async (user) => {
           const url = [];
           const {
@@ -429,4 +466,5 @@ module.exports = {
   likedUsers,
   filterUsers,
   getUser,
+  deletePicture,
 };

@@ -12,7 +12,7 @@ signUpRoute.post("/checkemail", controller.checkDuplicateEmail);
 
 signUpRoute.post("/other-services", controller.checkDuplicateService);
 
-signUpRoute.post("/create-user", controller.saveUid);
+signUpRoute.post("/create-user", upload.array("photo", 5), controller.saveUid);
 
 signUpRoute.post(
   "/signup",

@@ -50,13 +50,13 @@ const downloadFile = async (imageName) => {
   return url;
 };
 
-const deleteFile = (file) => {
+const deleteFile = async (imageName) => {
   const params = {
-    Bucket: process.env.MY_AWS_STORAGE_BUCKET_NAME,
-    Key: file,
+    Bucket: bucket,
+    Key: imageName,
   };
-
-  return s3.deleteObject(params).promise();
+  const command = new DeleteObjectCommand(params);
+  return await s3.send(command);
 };
 
 module.exports = { uploadFile, downloadFile, deleteFile };
