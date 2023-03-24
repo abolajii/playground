@@ -17,7 +17,7 @@ signInRoute.put("/add/coords", controller.addUserCoords);
 
 signInRoute.post("/forgot-password", controller.forgotPassword);
 
-signInRoute.post("/generate-otp", controller.generateOtp);
+signInRoute.post("/generate-otp", controller.sendResetPasswordEmail);
 
 signInRoute.post("/filter/:id", controller.filterUsers);
 

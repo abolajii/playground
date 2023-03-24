@@ -1,12 +1,15 @@
 const { get } = require("mongoose");
 const db = require("../model");
+const { generateOtp } = require("../utils/generate.otp");
 const { getAge } = require("../utils/get.age");
 const { getDistanceBetweenTwoPoints } = require("../utils/get.miles");
 const { downloadFile, deleteFile } = require("../utils/s3");
+const nodemailer = require("../config/nodemailer.config");
 
 const User = db.user;
 const Preferences = db.preferences;
 const Uid = db.uid;
+const Resetpassword = db.resetpassword;
 
 const deletePicture = async (req, res) => {
   await deleteFile(req.body.img);
@@ -301,27 +304,75 @@ const forgotPassword = (req, res) => {
       return;
     }
     if (user) {
-      res.status(200).json(user);
+      res.status(200).json({ message: "User found" });
     } else {
       res.status(404).json({ message: "User not found" });
     }
   });
 };
 
-const generateOtp = (req, res) => {
-  User.findOne({ email: req.body.email }, (err, user) => {
-    if (err) {
-      res.status(500).json({ message: "Error on the server." });
-      return;
-    }
-    if (user) {
-      const otp = Math.floor(100000 + Math.random() * 900000);
+const sendResetPasswordEmail = (req, res) => {
+  const otp = generateOtp(6);
+  const { email } = req.body;
 
-      res.status(200).json({ otp });
-    } else {
-      res.status(404).json({ message: "User not found" });
-    }
-  });
+  console.log(email);
+
+  User.find({ email })
+    .then((each) => {
+      const user = each[0];
+      if (!user)
+        return res.status(400).send({
+          message: "No user found, please create an account",
+        });
+
+      // if (user.status === "Pending") {
+      //   createError(res, "Please verify your account!");
+      //   return;
+      // }
+
+      Resetpassword.find({
+        userId: user._id,
+      })
+        .then((each) => {
+          const resetPassword = each[0];
+          if (!resetPassword) {
+            const data = { userId: user._id, uniqueString: String(otp) };
+            const userPassword = new Resetpassword(data);
+            userPassword
+              .save()
+              .then(() => {
+                res.send({
+                  status: "SUCCESS",
+                  message: "Otp has been sent successfully.",
+                });
+                nodemailer.sendResetPasswordEmail(user.name, user.email, otp);
+              })
+              .catch((err) => {});
+          } else {
+            Resetpassword.findOneAndUpdate(
+              { userId: user._id },
+              { uniqueString: String(otp) }
+            )
+              .then(() => {
+                res.send({
+                  status: "SUCCESS",
+                  message: "Otp has been sent successfully.",
+                });
+                nodemailer.sendResetPasswordEmail(user.name, user.email, otp);
+              })
+              .catch((err) => {});
+            res.send({
+              status: "SUCCESS",
+              message: "Otp has been sent successfully.",
+            });
+            nodemailer.sendResetPasswordEmail(user.name, user.email, otp);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    })
+    .catch((e) => console.log("error", e));
 };
 
 const editInterests = (req, res) => {
@@ -460,7 +511,7 @@ module.exports = {
   userPreferences,
   getAllUsersCopy,
   forgotPassword,
-  generateOtp,
+  sendResetPasswordEmail,
   editInterests,
   favoritesUser,
   likedUsers,
