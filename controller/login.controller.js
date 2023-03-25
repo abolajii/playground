@@ -590,6 +590,7 @@ const editProfile = (req, res) => {
       if (user) {
         const { password, ...userWithoutPassword } = user._doc;
 
+        const url = [];
         for (let index = 0; index < user.photos.length; index++) {
           const element = user.photos[index];
           const res = await downloadFile(element);
