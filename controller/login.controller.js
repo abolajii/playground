@@ -1,10 +1,11 @@
-const { get } = require("mongoose");
 const db = require("../model");
 const { generateOtp } = require("../utils/generate.otp");
 const { getAge } = require("../utils/get.age");
 const { getDistanceBetweenTwoPoints } = require("../utils/get.miles");
 const { downloadFile, deleteFile } = require("../utils/s3");
 const nodemailer = require("../config/nodemailer.config");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
 const User = db.user;
 const Preferences = db.preferences;
@@ -49,10 +50,36 @@ const loginWithEmail = (req, res) => {
     }
     if (user) {
       //
-      if (user.password !== req.body.password) {
-        res.status(400).json({ message: "Invalid user details" });
-      } else {
+
+      var passwordIsValid = bcrypt.compareSync(
+        req.body.password,
+        user.password
+      );
+
+      if (!passwordIsValid) {
+        return res.status(401).send({
+          accessToken: null,
+          message: "Invalid Username or Password!",
+        });
+      }
+      // todo
+      // if () {
+      // return res.status(401).send({
+      //   message: "Pending Account. Please Verify Your Email!",
+      // });
+      // }
+      else {
         const url = [];
+
+        const token = jwt.sign({ id: user.id }, process.env.secret, {
+          expiresIn: 86400, // 24 hours
+        });
+
+        // var authorities = [];
+
+        // for (let i = 0; i < user.roles.length; i++) {
+        //   authorities.push("ROLE_" + user.roles[i].name.toUpperCase());
+        // }
 
         const {
           password,
@@ -83,6 +110,7 @@ const loginWithEmail = (req, res) => {
               preferences: preferencesWithoutId,
               dob,
               url,
+              accessToken: token,
             };
 
             res.status(200).json(allData);
@@ -315,8 +343,6 @@ const sendResetPasswordEmail = (req, res) => {
   const otp = generateOtp(6);
   const { email } = req.body;
 
-  console.log(email);
-
   User.find({ email })
     .then((each) => {
       const user = each[0];
@@ -373,6 +399,41 @@ const sendResetPasswordEmail = (req, res) => {
         });
     })
     .catch((e) => console.log("error", e));
+};
+
+const verifyOtp = (req, res) => {
+  const { otp } = req.body;
+  Resetpassword.find({
+    uniqueString: otp,
+  })
+    .then((each) => {
+      const user = each[0];
+      if (!user) {
+        res.status(400).send({ message: "Invalid OTP" });
+      } else {
+        // res.status(200).send({ message: "Valid OTP" });
+        Resetpassword.deleteOne({ userId: user.userId })
+          .then(() => {
+            res.status(200).send({ message: "Valid OTP", userId: user.userId });
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
+    })
+    .catch((e) => console.log("error", e));
+};
+
+const resetPassword = (req, res) => {
+  User.findOneAndUpdate(
+    { _id: req.body.id },
+    { password: bcrypt.hashSync(req.body.password, 8) },
+    { new: true }
+  )
+    .then(() => {
+      res.status(200).send({ message: "Password updated successfully!!" });
+    })
+    .catch((e) => console.log("error"));
 };
 
 const editInterests = (req, res) => {
@@ -518,4 +579,6 @@ module.exports = {
   filterUsers,
   getUser,
   deletePicture,
+  verifyOtp,
+  resetPassword,
 };
