@@ -386,12 +386,9 @@ const sendResetPasswordEmail = (req, res) => {
                 });
                 nodemailer.sendResetPasswordEmail(user.name, user.email, otp);
               })
-              .catch((err) => {});
-            res.send({
-              status: "SUCCESS",
-              message: "Otp has been sent successfully.",
-            });
-            nodemailer.sendResetPasswordEmail(user.name, user.email, otp);
+              .catch((err) => {
+                console.log(err);
+              });
           }
         })
         .catch((err) => {
