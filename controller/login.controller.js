@@ -371,10 +371,23 @@ const sendResetPasswordEmail = (req, res) => {
                   status: "SUCCESS",
                   message: "Otp has been sent successfully.",
                 });
+
+                console.log({
+                  user: process.env.user,
+                  pass: process.env.pass,
+                  secret: process.env.secret,
+                });
+
                 nodemailer.sendResetPasswordEmail(user.name, user.email, otp);
               })
               .catch((err) => {});
           } else {
+            console.log({
+              user: process.env.user,
+              pass: process.env.pass,
+              secret: process.env.secret,
+            });
+
             Resetpassword.findOneAndUpdate(
               { userId: user._id },
               { uniqueString: String(otp) }
