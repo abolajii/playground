@@ -9,6 +9,8 @@ const User = mongoose.model(
       password: String,
       gender: String,
       phone: String,
+      location: String,
+      about_me: String,
       dob: String,
       status: {
         type: String,

@@ -372,23 +372,10 @@ const sendResetPasswordEmail = (req, res) => {
                   message: "Otp has been sent successfully.",
                 });
 
-                console.log({
-                  user: process.env.user,
-                  pass: process.env.pass,
-                  secret: process.env.secret,
-                });
-
                 nodemailer.sendResetPasswordEmail(user.name, user.email, otp);
               })
               .catch((err) => {});
           } else {
-            console.log({
-              user: process.env.user,
-              pass: process.env.pass,
-              secret: process.env.secret,
-              otp,
-            });
-
             Resetpassword.findOneAndUpdate(
               { userId: user._id },
               { uniqueString: String(otp) }
@@ -575,6 +562,44 @@ const filterUsers = (req, res) => {
   );
 };
 
+const editProfile = (req, res) => {
+  Object.keys(req.body).forEach((key) => {
+    if (req.body[key] === "") {
+      delete req.body[key];
+    }
+  });
+
+  User.findByIdAndUpdate(
+    { _id: req.body.id },
+    {
+      $set: {
+        my_interests: req.body.my_interests,
+        about_me: req.body.about_me,
+        location: req.body.location,
+        phone: req.body.phone,
+        email: req.body.email,
+      },
+    },
+    { new: true },
+    (err, user) => {
+      if (err) {
+        res.status(500).json({ message: "Error on the server." });
+        return;
+      }
+
+      if (user) {
+        const { password, ...userWithoutPassword } = user._doc;
+
+        res.status(200).json({
+          message: "User updated successfully",
+        });
+      } else {
+        res.status(404).json({ message: "User not found" });
+      }
+    }
+  );
+};
+
 module.exports = {
   loginWithEmail,
   getAllUsers,
@@ -592,4 +617,5 @@ module.exports = {
   deletePicture,
   verifyOtp,
   resetPassword,
+  editProfile,
 };
