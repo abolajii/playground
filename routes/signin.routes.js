@@ -19,7 +19,7 @@ signInRoute.post("/forgot-password", controller.forgotPassword);
 
 signInRoute.post("/verify-otp", controller.verifyOtp);
 
-signInRoute.post("/reset-password", controller.resetPassword);
+signInRoute.put("/reset-password", controller.resetPassword);
 
 signInRoute.post("/generate-otp", controller.sendResetPasswordEmail);
 
