@@ -343,7 +343,7 @@ const sendResetPasswordEmail = (req, res) => {
   const otp = generateOtp(6);
   const { email } = req.body;
 
-  User.find({ email })
+  User.find({ email: email.trim() })
     .then((each) => {
       const user = each[0];
       if (!user)
