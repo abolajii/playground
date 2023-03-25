@@ -376,6 +376,7 @@ const sendResetPasswordEmail = (req, res) => {
                   user: process.env.user,
                   pass: process.env.pass,
                   secret: process.env.secret,
+                  otp,
                 });
 
                 nodemailer.sendResetPasswordEmail(user.name, user.email, otp);
@@ -386,6 +387,7 @@ const sendResetPasswordEmail = (req, res) => {
               user: process.env.user,
               pass: process.env.pass,
               secret: process.env.secret,
+              otp,
             });
 
             Resetpassword.findOneAndUpdate(
