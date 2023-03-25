@@ -581,7 +581,7 @@ const editProfile = (req, res) => {
       },
     },
     { new: true },
-    (err, user) => {
+    async (err, user) => {
       if (err) {
         res.status(500).json({ message: "Error on the server." });
         return;
@@ -590,9 +590,15 @@ const editProfile = (req, res) => {
       if (user) {
         const { password, ...userWithoutPassword } = user._doc;
 
+        for (let index = 0; index < user.photos.length; index++) {
+          const element = user.photos[index];
+          const res = await downloadFile(element);
+          url.push(res);
+        }
+
         res.status(200).json({
           message: "User updated successfully",
-          user: userWithoutPassword,
+          user: { url, ...userWithoutPassword },
         });
       } else {
         res.status(404).json({ message: "User not found" });
