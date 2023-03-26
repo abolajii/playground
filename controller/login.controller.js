@@ -369,10 +369,10 @@ const sendResetPasswordEmail = (req, res) => {
               .then(() => {
                 nodemailer.sendResetPasswordEmail(user.name, user.email, otp);
 
-                // res.send({
-                //   status: "SUCCESS",
-                //   message: "Otp has been sent successfully.",
-                // });
+                res.send({
+                  status: "SUCCESS",
+                  message: "Otp has been sent successfully.",
+                });
               })
               .catch((err) => {});
           } else {
@@ -383,10 +383,10 @@ const sendResetPasswordEmail = (req, res) => {
               .then(() => {
                 nodemailer.sendResetPasswordEmail(user.name, user.email, otp);
 
-                // res.send({
-                //   status: "SUCCESS",
-                //   message: "Otp has been sent successfully.",
-                // });
+                res.send({
+                  status: "SUCCESS",
+                  message: "Otp has been sent successfully.",
+                });
               })
               .catch((err) => {
                 console.log(err);
