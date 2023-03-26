@@ -5,6 +5,7 @@ const user = process.env.user;
 const pass = process.env.pass;
 
 const transport = nodemailer.createTransport({
+  name: "abolajiadeajayi",
   service: "Gmail",
   port: 465,
   secure: true,

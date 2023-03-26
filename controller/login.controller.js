@@ -343,7 +343,7 @@ const sendResetPasswordEmail = (req, res) => {
   const otp = generateOtp(6);
   const { email } = req.body;
 
-  User.find({ email: email.trim() })
+  User.find({ email: email.trim().toLowerCase() })
     .then((each) => {
       const user = each[0];
       if (!user)
@@ -367,12 +367,12 @@ const sendResetPasswordEmail = (req, res) => {
             userPassword
               .save()
               .then(() => {
-                res.send({
-                  status: "SUCCESS",
-                  message: "Otp has been sent successfully.",
-                });
-
                 nodemailer.sendResetPasswordEmail(user.name, user.email, otp);
+
+                // res.send({
+                //   status: "SUCCESS",
+                //   message: "Otp has been sent successfully.",
+                // });
               })
               .catch((err) => {});
           } else {
@@ -381,11 +381,12 @@ const sendResetPasswordEmail = (req, res) => {
               { uniqueString: String(otp) }
             )
               .then(() => {
-                res.send({
-                  status: "SUCCESS",
-                  message: "Otp has been sent successfully.",
-                });
                 nodemailer.sendResetPasswordEmail(user.name, user.email, otp);
+
+                // res.send({
+                //   status: "SUCCESS",
+                //   message: "Otp has been sent successfully.",
+                // });
               })
               .catch((err) => {
                 console.log(err);
