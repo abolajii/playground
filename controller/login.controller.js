@@ -366,8 +366,12 @@ const sendResetPasswordEmail = (req, res) => {
             const userPassword = new Resetpassword(data);
             userPassword
               .save()
-              .then(() => {
-                nodemailer.sendResetPasswordEmail(user.name, user.email, otp);
+              .then(async () => {
+                await nodemailer.sendResetPasswordEmail(
+                  user.name,
+                  user.email,
+                  otp
+                );
 
                 res.send({
                   status: "SUCCESS",
@@ -380,8 +384,12 @@ const sendResetPasswordEmail = (req, res) => {
               { userId: user._id },
               { uniqueString: String(otp) }
             )
-              .then(() => {
-                nodemailer.sendResetPasswordEmail(user.name, user.email, otp);
+              .then(async () => {
+                await nodemailer.sendResetPasswordEmail(
+                  user.name,
+                  user.email,
+                  otp
+                );
 
                 res.send({
                   status: "SUCCESS",
