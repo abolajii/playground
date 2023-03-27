@@ -29,7 +29,7 @@ const signUpWithEmail = async (req, res) => {
 
   const newUser = new User({
     dob,
-    email,
+    email: email.toLowerCase().trim(),
     password: bcrypt.hashSync(req.body.password, 8),
     gender,
     my_interests,
@@ -160,7 +160,7 @@ const signUpWithEmail = async (req, res) => {
 };
 
 const checkDuplicateEmail = (req, res) => {
-  User.findOne({ email: req.body.email }, (err, user) => {
+  User.findOne({ email: req.body.email.toLowerCase().trim() }, (err, user) => {
     if (err) {
       res.status(500).json({ message: "Error on the server." });
       return;

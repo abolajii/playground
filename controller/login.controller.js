@@ -43,86 +43,89 @@ const deletePicture = async (req, res) => {
 };
 
 const loginWithEmail = (req, res) => {
-  User.findOne({ email: req.body.email.trim() }, async (err, user) => {
-    if (err) {
-      res.status(500).json({ message: "Error on the server." });
-      return;
-    }
-    if (user) {
-      //
-
-      var passwordIsValid = bcrypt.compareSync(
-        req.body.password,
-        user.password
-      );
-
-      if (!passwordIsValid) {
-        return res.status(401).send({
-          accessToken: null,
-          message: "Invalid Username or Password!",
-        });
+  User.findOne(
+    { email: req.body.email.toLowerCase().trim() },
+    async (err, user) => {
+      if (err) {
+        res.status(500).json({ message: "Error on the server." });
+        return;
       }
-      // todo
-      // if () {
-      // return res.status(401).send({
-      //   message: "Pending Account. Please Verify Your Email!",
-      // });
-      // }
-      else {
-        const url = [];
+      if (user) {
+        //
 
-        const token = jwt.sign({ id: user.id }, process.env.secret, {
-          expiresIn: 86400, // 24 hours
-        });
+        var passwordIsValid = bcrypt.compareSync(
+          req.body.password,
+          user.password
+        );
 
-        // var authorities = [];
-
-        // for (let i = 0; i < user.roles.length; i++) {
-        //   authorities.push("ROLE_" + user.roles[i].name.toUpperCase());
-        // }
-
-        const {
-          password,
-          confirmationCode,
-          dob,
-          coords,
-          __v,
-          ...userWithoutPassword
-        } = user._doc;
-
-        for (let index = 0; index < user.photos.length; index++) {
-          const element = user.photos[index];
-          const res = await downloadFile(element);
-          url.push(res);
+        if (!passwordIsValid) {
+          return res.status(401).send({
+            accessToken: null,
+            message: "Invalid Username or Password!",
+          });
         }
+        // todo
+        // if () {
+        // return res.status(401).send({
+        //   message: "Pending Account. Please Verify Your Email!",
+        // });
+        // }
+        else {
+          const url = [];
 
-        Preferences.findOne({ user_id: user._id }, (err, preferences) => {
-          if (err) {
-            res.status(500).json({ message: "Error on the server." });
-            return;
+          const token = jwt.sign({ id: user.id }, process.env.secret, {
+            expiresIn: 86400, // 24 hours
+          });
+
+          // var authorities = [];
+
+          // for (let i = 0; i < user.roles.length; i++) {
+          //   authorities.push("ROLE_" + user.roles[i].name.toUpperCase());
+          // }
+
+          const {
+            password,
+            confirmationCode,
+            dob,
+            coords,
+            __v,
+            ...userWithoutPassword
+          } = user._doc;
+
+          for (let index = 0; index < user.photos.length; index++) {
+            const element = user.photos[index];
+            const res = await downloadFile(element);
+            url.push(res);
           }
-          if (preferences) {
-            const { user_id, _id, __v, ...preferencesWithoutId } =
-              preferences._doc;
 
-            const allData = {
-              ...userWithoutPassword,
-              preferences: preferencesWithoutId,
-              dob,
-              url,
-              accessToken: token,
-            };
+          Preferences.findOne({ user_id: user._id }, (err, preferences) => {
+            if (err) {
+              res.status(500).json({ message: "Error on the server." });
+              return;
+            }
+            if (preferences) {
+              const { user_id, _id, __v, ...preferencesWithoutId } =
+                preferences._doc;
 
-            res.status(200).json(allData);
-          } else {
-            res.status(404).json({ message: "Preferences not found" });
-          }
-        });
+              const allData = {
+                ...userWithoutPassword,
+                preferences: preferencesWithoutId,
+                dob,
+                url,
+                accessToken: token,
+              };
+
+              res.status(200).json(allData);
+            } else {
+              res.status(404).json({ message: "Preferences not found" });
+            }
+          });
+        }
+      } else {
+        res.status(404).json({ message: "Invalid email or password!" });
       }
-    } else {
-      res.status(404).json({ message: "Invalid email or password!" });
     }
-  });
+  );
 };
 
 const getUser = (req, res) => {
@@ -324,7 +327,7 @@ const userPreferences = (req, res) => {
 };
 
 const forgotPassword = (req, res) => {
-  User.findOne({ email: req.body.email }, (err, user) => {
+  User.findOne({ email: req.body.email.toLowerCase().trim() }, (err, user) => {
     if (err) {
       res.status(500).json({ message: "Error on the server." });
       return;
@@ -584,7 +587,7 @@ const editProfile = (req, res) => {
         about_me: req.body.about_me,
         location: req.body.location,
         phone: req.body.phone,
-        email: req.body.email,
+        email: req.body.email.toLowerCase().trim(),
       },
     },
     { new: true },
