@@ -41,4 +41,6 @@ module.exports = function (signInRoute) {
   signInRoute.delete("/api/delete/image", controller.deletePicture);
 
   signInRoute.put("/api/edit/profile", controller.editProfile);
+
+  signInRoute.put("/api/change-password", controller.changePassword);
 };

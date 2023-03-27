@@ -1,6 +1,7 @@
 const db = require("../model");
 const { uploadFile, downloadFile } = require("../utils/s3");
 const crypto = require("crypto");
+const bcrypt = require("bcryptjs");
 
 const User = db.user;
 const Role = db.role;
@@ -23,21 +24,13 @@ const signUpWithEmail = async (req, res) => {
 
   req.body.photos = links;
 
-  const {
-    dob,
-    email,
-    password,
-    gender,
-    my_interests,
-    interested_in,
-    name,
-    photos,
-  } = req.body;
+  const { dob, email, gender, my_interests, interested_in, name, photos } =
+    req.body;
 
   const newUser = new User({
     dob,
     email,
-    password,
+    password: bcrypt.hashSync(req.body.password, 8),
     gender,
     my_interests,
     interested_in,
@@ -93,8 +86,6 @@ const signUpWithEmail = async (req, res) => {
               url,
             };
 
-            console.log(userToSend);
-
             user.roles = [role._id];
             user.save((err) => {
               if (err) {
@@ -146,8 +137,6 @@ const signUpWithEmail = async (req, res) => {
               ...userWithoutPassword,
               url,
             };
-
-            console.log(userToSend);
 
             user.roles = [role._id];
             user.save((err) => {

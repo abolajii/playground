@@ -43,7 +43,7 @@ const deletePicture = async (req, res) => {
 };
 
 const loginWithEmail = (req, res) => {
-  User.findOne({ email: req.body.email }, async (err, user) => {
+  User.findOne({ email: req.body.email.trim() }, async (err, user) => {
     if (err) {
       res.status(500).json({ message: "Error on the server." });
       return;
@@ -615,6 +615,38 @@ const editProfile = (req, res) => {
   );
 };
 
+const changePassword = (req, res) => {
+  const { id, password, newPassword } = req.body;
+  User.findById({
+    _id: id,
+  })
+    .then((user) => {
+      var passwordIsValid = bcrypt.compareSync(password, user.password);
+
+      if (!passwordIsValid) {
+        return res.status(401).send({
+          message: "Invalid Password!",
+        });
+      }
+
+      user.password = bcrypt.hashSync(newPassword, 8);
+
+      user.save((err) => {
+        if (err) {
+          res.status(500).json({ message: "Error on the server." });
+          return;
+        }
+
+        res.status(200).json({
+          message: "Password updated successfully!",
+        });
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
 module.exports = {
   loginWithEmail,
   getAllUsers,
@@ -633,4 +665,5 @@ module.exports = {
   verifyOtp,
   resetPassword,
   editProfile,
+  changePassword,
 };
