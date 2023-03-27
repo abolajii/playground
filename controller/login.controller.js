@@ -126,67 +126,6 @@ const loginWithEmail = (req, res) => {
 };
 
 const getUser = (req, res) => {
-  // Uid.findOne(
-  //   {
-  //     uid: req.body.uid,
-  //   },
-  //   (err, id) => {
-  //     if (err) {
-  //       console.log({ err });
-  //     }
-
-  //     if (id) {
-  //       User.findOne({ _id: id.user_id }, async (err, user) => {
-  //         if (err) {
-  //           res.status(500).json({ message: "Error on the server." });
-  //           return;
-  //         }
-  //         if (user) {
-  //           const url = [];
-  //           const {
-  //             password,
-  //             confirmationCode,
-  //             dob,
-  //             coords,
-  //             __v,
-  //             ...userWithoutPassword
-  //           } = user._doc;
-
-  //           for (let index = 0; index < user.photos.length; index++) {
-  //             const element = user.photos[index];
-  //             const res = await downloadFile(element);
-  //             url.push(res);
-  //           }
-
-  //           Preferences.findOne({ user_id: user._id }, (err, preferences) => {
-  //             if (err) {
-  //               res.status(500).json({ message: "Error on the server." });
-  //               return;
-  //             }
-  //             if (preferences) {
-  //               const { user_id, _id, __v, ...preferencesWithoutId } =
-  //                 preferences._doc;
-
-  //               const allData = {
-  //                 ...userWithoutPassword,
-  //                 preferences: preferencesWithoutId,
-  //                 dob,
-  //                 url,
-  //               };
-
-  //               res.status(200).json(allData);
-  //             } else {
-  //               res.status(404).json({ message: "Preferences not found" });
-  //             }
-  //           });
-  //         } else {
-  //           res.status(404).json({ message: "Invalid email or password!" });
-  //         }
-  //       });
-  //     }
-  //   }
-  // );
-
   Uid.findOne({
     uid: req.body.uid,
   })
