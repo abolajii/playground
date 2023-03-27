@@ -3,34 +3,42 @@ const controller = require("../controller/login.controller");
 
 // const { authJwt } = require("../middleware");
 
-signInRoute.post("/signin", controller.loginWithEmail);
+module.exports = function (signInRoute) {
+  signInRoute.use(function (req, res, next) {
+    res.header(
+      "Access-Control-Allow-Headers",
+      "x-access-token, Origin, Content-Type, Accept"
+    );
+    next();
+  });
 
-signInRoute.post("/liked", controller.likedUsers);
+  signInRoute.post("/signin", controller.loginWithEmail);
 
-signInRoute.post("/favorites", controller.favoritesUser);
+  signInRoute.post("/liked", controller.likedUsers);
 
-signInRoute.post("/all/users", controller.getAllUsers);
+  signInRoute.post("/favorites", controller.favoritesUser);
 
-signInRoute.post("/preferences", controller.userPreferences);
+  signInRoute.post("/all/users", controller.getAllUsers);
 
-signInRoute.put("/add/coords", controller.addUserCoords);
+  signInRoute.post("/preferences", controller.userPreferences);
 
-signInRoute.post("/forgot-password", controller.forgotPassword);
+  signInRoute.put("/add/coords", controller.addUserCoords);
 
-signInRoute.post("/verify-otp", controller.verifyOtp);
+  signInRoute.post("/forgot-password", controller.forgotPassword);
 
-signInRoute.put("/reset-password", controller.resetPassword);
+  signInRoute.post("/verify-otp", controller.verifyOtp);
 
-signInRoute.post("/generate-otp", controller.sendResetPasswordEmail);
+  signInRoute.put("/reset-password", controller.resetPassword);
 
-signInRoute.post("/filter/:id", controller.filterUsers);
+  signInRoute.post("/generate-otp", controller.sendResetPasswordEmail);
 
-signInRoute.post("/edit/interests", controller.editInterests);
+  signInRoute.post("/filter/:id", controller.filterUsers);
 
-signInRoute.post("/get-user", controller.getUser);
+  signInRoute.post("/edit/interests", controller.editInterests);
 
-signInRoute.delete("/delete/image", controller.deletePicture);
+  signInRoute.post("/get-user", controller.getUser);
 
-signInRoute.put("/edit/profile", controller.editProfile);
+  signInRoute.delete("/delete/image", controller.deletePicture);
 
-module.exports = signInRoute;
+  signInRoute.put("/edit/profile", controller.editProfile);
+};
