@@ -16,18 +16,18 @@ module.exports = function (signUpRoute) {
     next();
   });
 
-  signUpRoute.post("/checkemail", controller.checkDuplicateEmail);
+  signUpRoute.post("/api/checkemail", controller.checkDuplicateEmail);
 
-  signUpRoute.post("/other-services", controller.checkDuplicateService);
+  signUpRoute.post("/api/other-services", controller.checkDuplicateService);
 
   signUpRoute.post(
-    "/create-user",
+    "/api/create-user",
     upload.array("photo", 5),
     controller.saveUid
   );
 
   signUpRoute.post(
-    "/signup",
+    "/api/signup",
     upload.array("photo", 5),
     controller.signUpWithEmail
   );
