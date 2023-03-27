@@ -445,7 +445,6 @@ const resetPassword = (req, res) => {
 };
 
 const editInterests = (req, res) => {
-  console.log(req.body);
   User.findOneAndUpdate(
     { _id: req.body.id },
     { my_interests: req.body.my_interests },
