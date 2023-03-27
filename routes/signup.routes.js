@@ -9,11 +9,17 @@ const upload = multer({ storage });
 
 module.exports = function (signUpRoute) {
   signUpRoute.use(function (req, res, next) {
-    res.header("Access-Control-Allow-Credentials", true);
-    res.header(
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader(
+      "Access-Control-Allow-Methods",
+      "GET, POST, OPTIONS, PUT, PATCH, DELETE"
+    ); // If needed
+    res.setHeader(
       "Access-Control-Allow-Headers",
-      "x-access-token, Origin, Content-Type, Accept"
-    );
+      "X-Requested-With,content-type"
+    ); // If needed
+    res.setHeader("Access-Control-Allow-Credentials", true); // If needed
+
     next();
   });
 
