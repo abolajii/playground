@@ -445,19 +445,28 @@ const resetPassword = (req, res) => {
 };
 
 const editInterests = (req, res) => {
+  console.log(req.body);
   User.findOneAndUpdate(
     { _id: req.body.id },
     { my_interests: req.body.my_interests },
     { new: true },
-    (err, user) => {
+    async (err, user) => {
       if (err) {
         res.status(500).json({ message: "Error on the server." });
         return;
       }
       if (user) {
+        const { password, ...userWithoutPassword } = user._doc;
+
+        const url = [];
+        for (let index = 0; index < user.photos.length; index++) {
+          const element = user.photos[index];
+          const res = await downloadFile(element);
+          url.push(res);
+        }
         res.status(200).json({
-          message: "Interests updated successfully",
-          my_interests: user.my_interests,
+          message: "Interest updated successfully",
+          user: { url, ...userWithoutPassword },
         });
       } else {
         res.status(404).json({ message: "User not found" });

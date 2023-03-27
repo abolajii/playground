@@ -34,7 +34,7 @@ module.exports = function (signInRoute) {
 
   signInRoute.post("/api/filter/:id", controller.filterUsers);
 
-  signInRoute.post("/api/edit/interests", controller.editInterests);
+  signInRoute.put("/api/edit/interests", controller.editInterests);
 
   signInRoute.post("/api/get-user", controller.getUser);
 
