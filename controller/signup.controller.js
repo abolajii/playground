@@ -6,9 +6,11 @@ const bcrypt = require("bcryptjs");
 const User = db.user;
 const Role = db.role;
 const Preferences = db.preferences;
-const Uid = db.uid;
 
+const Uid = db.uid;
 const signUpWithEmail = async (req, res) => {
+  console.log(req.body);
+  // return;
   const links = [];
 
   for (let i = 0; i < req.files.length; i++) {
