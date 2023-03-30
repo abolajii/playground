@@ -18,7 +18,7 @@ module.exports = function (signUpRoute) {
       "Access-Control-Allow-Headers",
       "X-Requested-With,content-type"
     ); // If needed
-    res.setHeader("Access-Control-Allow-Credentials", true); // If needed
+    // res.setHeader("Access-Control-Allow-Credentials", true); // If needed
 
     next();
   });
