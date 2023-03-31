@@ -25,6 +25,8 @@ module.exports = function (signUpRoute) {
 
   signUpRoute.post("/api/checkemail", controller.checkDuplicateEmail);
 
+  signUpRoute.post("/api/dob", controller.dob);
+
   signUpRoute.post("/api/other-services", controller.checkDuplicateService);
 
   signUpRoute.post(

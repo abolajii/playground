@@ -192,9 +192,15 @@ const saveUid = (req, res) => {
   signUpWithEmail(req, res);
 };
 
+const dob = (req, res) => {
+  console.log(req.body.dob);
+  res.send(req.body.dob);
+};
+
 module.exports = {
   signUpWithEmail,
   checkDuplicateEmail,
   checkDuplicateService,
   saveUid,
+  dob,
 };
