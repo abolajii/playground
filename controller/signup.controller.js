@@ -9,7 +9,6 @@ const Preferences = db.preferences;
 
 const Uid = db.uid;
 const signUpWithEmail = async (req, res) => {
-  console.log(req.body);
   const links = [];
 
   for (let i = 0; i < req.files.length; i++) {
@@ -27,6 +26,8 @@ const signUpWithEmail = async (req, res) => {
 
   const { dob, email, gender, my_interests, interested_in, name, photos } =
     req.body;
+
+  console.log(dob);
 
   const newUser = new User({
     dob,
@@ -49,9 +50,7 @@ const signUpWithEmail = async (req, res) => {
       user_id: newUser._id,
     });
 
-    newUid.save((err, user) => {
-      console.log(err, user);
-    });
+    newUid.save();
 
     Preference.save((err) => {
       if (err) {
