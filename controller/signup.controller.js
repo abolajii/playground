@@ -10,7 +10,6 @@ const Preferences = db.preferences;
 const Uid = db.uid;
 const signUpWithEmail = async (req, res) => {
   console.log(req.body);
-  // return;
   const links = [];
 
   for (let i = 0; i < req.files.length; i++) {
@@ -75,6 +74,8 @@ const signUpWithEmail = async (req, res) => {
               return;
             }
 
+            user.roles = [role._id];
+
             const { __v, password, ...userWithoutPassword } = user._doc;
 
             for (let index = 0; index < user.photos.length; index++) {
@@ -88,7 +89,6 @@ const signUpWithEmail = async (req, res) => {
               url,
             };
 
-            user.roles = [role._id];
             user.save((err) => {
               if (err) {
                 res.status(500).json({ message: "Error on the server." });
