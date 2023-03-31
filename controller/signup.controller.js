@@ -16,7 +16,7 @@ const signUpWithEmail = async (req, res) => {
       crypto.randomBytes(bytes).toString("hex");
 
     const imageName = randomImageName();
-    console.log("Uploading...", i);
+    console.log("Uploading....", i);
     const file = req.files[i];
     await uploadFile(file, imageName);
     links.push(`${imageName}`);
