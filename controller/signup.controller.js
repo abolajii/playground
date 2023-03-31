@@ -74,8 +74,6 @@ const signUpWithEmail = async (req, res) => {
               return;
             }
 
-            console.log(role);
-
             user.roles = [role._id];
 
             const { __v, password, ...userWithoutPassword } = user._doc;
