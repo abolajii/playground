@@ -13,7 +13,6 @@ var whitelist = [
   "http://localhost:3000",
   "http://localhost:3000/details",
   "http://localhost:3001",
-  "https://dobb-8c058.web.app",
   "http://localhost:3001/details",
   "https://lovebirdz-759c8.web.app",
   "https://lovebirdz-759c8.web.app/details",

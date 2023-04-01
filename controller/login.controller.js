@@ -260,9 +260,10 @@ const addUserCoords = (req, res) => {
         return;
       }
       if (user) {
+        const { password, ...other } = user._doc;
         res
           .status(200)
-          .json({ message: "User coords updated successfully", user });
+          .json({ message: "User coords updated successfully", user: other });
       } else {
         res.status(404).json({ message: "User not found" });
       }
