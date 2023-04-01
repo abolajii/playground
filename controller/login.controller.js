@@ -222,8 +222,6 @@ const getAllUsers = (req, res) => {
             coords
           )?.toFixed(0);
 
-          console.log(miles);
-
           const allData = {
             ...userWithoutPassword,
             age,
