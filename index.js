@@ -31,7 +31,7 @@ var corsOptions = {
 
 app.use(cors(corsOptions));
 
-app.use(cors());
+// app.use(cors());
 
 const mongoose = require("mongoose");
 
