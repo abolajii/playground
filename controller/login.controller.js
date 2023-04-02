@@ -519,6 +519,7 @@ const likedUsers = (req, res) => {
 };
 
 const filterUsers = (req, res) => {
+  console.log(req.body);
   Object.keys(req.body).forEach((key) => {
     if (req.body[key] === "") {
       delete req.body[key];
@@ -531,7 +532,10 @@ const filterUsers = (req, res) => {
     },
     (err, users) => {
       if (users) {
-        let allUsers = users.map((user) => {
+        const url = [];
+
+        let allUsers = users.map(async (user) => {
+          console.log({ coords: user.coords, user });
           const {
             password,
             confirmationCode,
@@ -545,9 +549,16 @@ const filterUsers = (req, res) => {
             coords
           )?.toFixed(0);
 
+          for (let index = 0; index < user.photos.length; index++) {
+            const element = user.photos[index];
+            const res = await downloadFile(element);
+            url.push(res);
+          }
+
           const allData = {
             ...userWithoutPassword,
             age,
+            url,
             miles: Number(miles),
           };
 
@@ -660,6 +671,18 @@ const changePassword = (req, res) => {
     });
 };
 
+const getById = (req, res) => {
+  User.findById({
+    _id: req.body.id,
+  })
+    .then((user) => {
+      console.log(user);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
 module.exports = {
   loginWithEmail,
   getAllUsers,
@@ -679,4 +702,5 @@ module.exports = {
   resetPassword,
   editProfile,
   changePassword,
+  getById,
 };

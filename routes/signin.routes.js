@@ -42,5 +42,7 @@ module.exports = function (signInRoute) {
 
   signInRoute.put("/api/edit/profile", controller.editProfile);
 
+  signInRoute.get("/api/user", controller.getById);
+
   signInRoute.put("/api/change-password", controller.changePassword);
 };
