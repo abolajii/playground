@@ -16,6 +16,8 @@ var whitelist = [
   "http://localhost:3001/details",
   "https://lovebirdz-759c8.web.app",
   "https://lovebirdz-759c8.web.app/details",
+  "https://dobb-8c058.web.app",
+  "https://dobb-8c058.web.app/details",
 ];
 var corsOptions = {
   origin: function (origin, callback) {
