@@ -519,7 +519,6 @@ const likedUsers = (req, res) => {
 };
 
 const filterUsers = (req, res) => {
-  console.log(req.body);
   Object.keys(req.body).forEach((key) => {
     if (req.body[key] === "") {
       delete req.body[key];
@@ -535,7 +534,6 @@ const filterUsers = (req, res) => {
         const url = [];
 
         let allUsers = users.map(async (user) => {
-          console.log({ coords: user.coords, user });
           const {
             password,
             confirmationCode,
@@ -564,6 +562,31 @@ const filterUsers = (req, res) => {
 
           return allData;
         });
+
+        Promise.all(allUsers).then(function (results) {
+          Object.keys(req.body).forEach((key) => {
+            if (key === "age") {
+              const [min, max] = req.body.age;
+              results = results.filter((user) => {
+                return user.age >= min && user.age <= max;
+              });
+            }
+
+            if (key === "miles") {
+              results = results.filter((user) => {
+                return user.miles <= req.body.miles;
+              });
+            }
+
+            if (key === "gender") {
+              results = results.filter((user) => {
+                return user.gender === req.body.gender;
+              });
+            }
+          });
+          res.status(200).json(results);
+        });
+        return;
 
         Object.keys(req.body).forEach((key) => {
           if (key === "age") {
@@ -677,6 +700,7 @@ const getById = (req, res) => {
   })
     .then((user) => {
       console.log(user);
+      res.status(200).send(user);
     })
     .catch((err) => {
       console.log(err);
