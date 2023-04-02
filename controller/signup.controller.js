@@ -9,6 +9,26 @@ const Preferences = db.preferences;
 
 const Uid = db.uid;
 const signUpWithEmail = async (req, res) => {
+  function convertDate(str) {
+    if (str === null) return;
+    str = str.toString();
+    let parts = str.split(" ");
+    let months = {
+      Jan: "01",
+      Feb: "02",
+      Mar: "03",
+      Apr: "04",
+      May: "05",
+      Jun: "06",
+      Jul: "07",
+      Aug: "08",
+      Sep: "09",
+      Oct: "10",
+      Nov: "11",
+      Dec: "12",
+    };
+    return `${months[parts[1]]}-${parts[2]}-${parts[3]}`;
+  }
   const links = [];
 
   for (let i = 0; i < req.files.length; i++) {
@@ -27,12 +47,8 @@ const signUpWithEmail = async (req, res) => {
   const { dob, email, gender, my_interests, interested_in, name, photos } =
     req.body;
 
-  const formattedDate = new Date(dob).toLocaleDateString().split("/");
-  const formatDob =
-    formattedDate[1] + "-" + formattedDate[0] + "-" + formattedDate[2];
-
   const newUser = new User({
-    dob: formatDob,
+    dob: convertDate(dob),
     email: email.toLowerCase().trim(),
     password: bcrypt.hashSync(req.body.password, 8),
     gender,
