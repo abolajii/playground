@@ -27,10 +27,12 @@ const signUpWithEmail = async (req, res) => {
   const { dob, email, gender, my_interests, interested_in, name, photos } =
     req.body;
 
-  console.log(dob);
+  const formattedDate = new Date(dob).toLocaleDateString().split("/");
+  const formatDob =
+    formattedDate[1] + "-" + formattedDate[0] + "-" + formattedDate[2];
 
   const newUser = new User({
-    dob,
+    dob: formatDob,
     email: email.toLowerCase().trim(),
     password: bcrypt.hashSync(req.body.password, 8),
     gender,
