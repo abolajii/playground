@@ -579,37 +579,16 @@ const filterUsers = (req, res) => {
             }
 
             if (key === "gender") {
+              const isGender =
+                req.body.gender === "Both" ? "" : req.body.gender;
               results = results.filter((user) => {
-                return user.gender === req.body.gender;
+                return isGender === "" ? user : user.gender === req.body.gender;
               });
             }
           });
+
           res.status(200).json(results);
         });
-        return;
-
-        Object.keys(req.body).forEach((key) => {
-          if (key === "age") {
-            const [min, max] = req.body.age;
-            allUsers = allUsers.filter((user) => {
-              return user.age >= min && user.age <= max;
-            });
-          }
-
-          if (key === "miles") {
-            allUsers = allUsers.filter((user) => {
-              return user.miles <= req.body.miles;
-            });
-          }
-
-          if (key === "gender") {
-            allUsers = allUsers.filter((user) => {
-              return user.gender === req.body.gender;
-            });
-          }
-        });
-
-        res.status(200).json(allUsers);
       }
     }
   );
