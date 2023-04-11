@@ -15,7 +15,6 @@ const Preferences = mongoose.model(
     kids: String,
     smoking: String,
     drinking: String,
-    family_plan: String,
   })
 );
 
