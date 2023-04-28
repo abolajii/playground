@@ -11,8 +11,12 @@ const transport = nodemailer.createTransport({
   secure: true,
   logger: true,
   debug: true,
+  // tls: {
+  //   ciphers: "SSLv3",
+  // },
   tls: {
-    ciphers: "SSLv3",
+    // do not fail on invalid certs
+    rejectUnauthorized: false,
   },
   auth: {
     user,
