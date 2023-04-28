@@ -9,6 +9,7 @@ const transport = nodemailer.createTransport({
   host,
   port: 465,
   secure: true,
+  debug: true,
   auth: {
     user,
     pass,
