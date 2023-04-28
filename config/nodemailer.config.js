@@ -10,6 +10,7 @@ const transport = nodemailer.createTransport({
   port: 465,
   secure: true,
   debug: true,
+  logger: true,
   auth: {
     user,
     pass,
@@ -54,9 +55,11 @@ module.exports.sendConfirmationEmail = async (
   });
 };
 
-module.exports.sendResetPasswordEmail = (name, email, otp) => {
-  transport
-    .sendMail({
+module.exports.sendResetPasswordEmail = async (name, email, otp) => {
+  await new Promise((resolve, reject) => {
+    console.log("sending mail...");
+    // send mail
+    transport.sendMail({
       from: user,
       to: email,
       subject: "Reset password link",
@@ -88,6 +91,6 @@ module.exports.sendResetPasswordEmail = (name, email, otp) => {
       </body>
       </html>
           `,
-    })
-    .catch((err) => console.log(err));
+    });
+  });
 };
