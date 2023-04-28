@@ -57,7 +57,6 @@ require("./routes/signup.routes")(app);
 
 function initial() {
   Role.estimatedDocumentCount((err, count) => {
-    console.log("intialized");
     if (!err && count === 0) {
       new Role({
         name: "user",
