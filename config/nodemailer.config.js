@@ -21,19 +21,41 @@ const transport = nodemailer.createTransport({
   },
 });
 
-module.exports.sendConfirmationEmail = (name, email, confirmationCode) => {
-  transport
-    .sendMail({
-      from: user,
-      to: email,
-      subject: "Please verify your account",
-      html: `<h1>Email Confirmation</h1>
+module.exports.testProduction = async () => {
+  await new Promise((resolve, reject) => {
+    // send mail
+    transport.sendMail(mailData, (err, info) => {
+      if (err) {
+        console.error(err);
+        reject(err);
+      } else {
+        console.log(info);
+        resolve(info);
+      }
+    });
+  });
+};
+
+module.exports.sendConfirmationEmail = async (
+  name,
+  email,
+  confirmationCode
+) => {
+  await new Promise((resolve, reject) => {
+    // send mail
+    transport
+      .sendMail({
+        from: user,
+        to: email,
+        subject: "Please verify your account",
+        html: `<h1>Email Confirmation</h1>
         <h2>Hello ${name}</h2>
         <p>Thank you for signing up! Please confirm your email by clicking on the following link</p>
         <a href=http://localhost:3002/verify-user/${confirmationCode}> Click here</a>
         </div>`,
-    })
-    .catch((err) => console.log(err));
+      })
+      .catch((err) => console.log(err));
+  });
 };
 
 module.exports.sendResetPasswordEmail = (name, email, otp) => {
