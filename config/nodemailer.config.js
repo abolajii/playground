@@ -9,8 +9,6 @@ const transport = nodemailer.createTransport({
   host,
   port: 465,
   secure: true,
-  logger: true,
-  debug: true,
   auth: {
     user,
     pass,
@@ -21,30 +19,16 @@ const transport = nodemailer.createTransport({
   },
 });
 
-module.exports.testProduction = async () => {
-  await new Promise((resolve, reject) => {
-    // send mail
-    transport.sendMail(mailData, (err, info) => {
-      if (err) {
-        console.error(err);
-        reject(err);
-      } else {
-        console.log(info);
-        resolve(info);
-      }
-    });
-  });
-};
-
 module.exports.sendConfirmationEmail = async (
   name,
   email,
   confirmationCode
 ) => {
   await new Promise((resolve, reject) => {
+    console.log("sending mail...");
     // send mail
-    transport
-      .sendMail({
+    transport.sendMail(
+      {
         from: user,
         to: email,
         subject: "Please verify your account",
@@ -53,8 +37,19 @@ module.exports.sendConfirmationEmail = async (
         <p>Thank you for signing up! Please confirm your email by clicking on the following link</p>
         <a href=http://localhost:3002/verify-user/${confirmationCode}> Click here</a>
         </div>`,
-      })
-      .catch((err) => console.log(err));
+      },
+      (err, info) => {
+        if (err) {
+          console.log("error sending mail...");
+          console.error(err);
+          reject(err);
+        } else {
+          console.log("sent mail...");
+          console.log(info);
+          resolve(info);
+        }
+      }
+    );
   });
 };
 
