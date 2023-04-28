@@ -380,7 +380,9 @@ const sendResetPasswordEmail = (req, res) => {
                   message: "Otp has been sent successfully.",
                 });
               })
-              .catch((err) => {});
+              .catch((err) => {
+                console.log(err);
+              });
           } else {
             Resetpassword.findOneAndUpdate(
               { userId: user._id },

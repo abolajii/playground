@@ -42,12 +42,8 @@ module.exports.sendConfirmationEmail = async (
       },
       (err, info) => {
         if (err) {
-          console.log("error sending mail...");
-          console.error(err);
           reject(err);
         } else {
-          console.log("sent mail...");
-          console.log(info);
           resolve(info);
         }
       }
@@ -59,11 +55,12 @@ module.exports.sendResetPasswordEmail = async (name, email, otp) => {
   await new Promise((resolve, reject) => {
     console.log("sending mail...");
     // send mail
-    transport.sendMail({
-      from: user,
-      to: email,
-      subject: "Reset password link",
-      html: `
+    transport.sendMail(
+      {
+        from: user,
+        to: email,
+        subject: "Reset password link",
+        html: `
       <html>
       <body style="margin: 0; padding: 0; box-sizing: border-box;">
       <p>Hello ${name},</p>
@@ -91,6 +88,14 @@ module.exports.sendResetPasswordEmail = async (name, email, otp) => {
       </body>
       </html>
           `,
-    });
+      },
+      (err, info) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(info);
+        }
+      }
+    );
   });
 };
