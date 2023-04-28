@@ -7,18 +7,17 @@ const pass = process.env.pass;
 
 const transport = nodemailer.createTransport({
   host,
-  port: 465,
-  secure: true,
+  port: 587,
+  secure: false,
   logger: true,
   debug: true,
-
-  tls: {
-    // do not fail on invalid certs
-    rejectUnauthorized: false,
-  },
   auth: {
     user,
     pass,
+  },
+  tls: {
+    // do not fail on invalid certs
+    rejectUnauthorized: false,
   },
 });
 
