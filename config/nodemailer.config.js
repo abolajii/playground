@@ -10,15 +10,15 @@ const transport = nodemailer.createTransport({
   port: 465,
   secure: true,
   logger: true,
-  // debug: true,
+  debug: true,
   auth: {
     user,
     pass,
   },
-  // tls: {
-  //   // do not fail on invalid certs
-  //   rejectUnauthorized: false,
-  // },
+  tls: {
+    // do not fail on invalid certs
+    rejectUnauthorized: false,
+  },
 });
 
 module.exports.sendConfirmationEmail = (name, email, confirmationCode) => {
